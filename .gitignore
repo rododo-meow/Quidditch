@@ -1,0 +1,13 @@
+*.o
+*.lib
+Build/
+Debug/
+Release/
+*.bpt
+*.gdb
+*.opensdf
+*.psess
+*.sdf
+*.vspx
+!/libs/glew/glew32.lib
+!/libs/turbojpeg/turbojpeg.lib
