@@ -49,49 +49,43 @@ void Game::destroy() {
 void Game::_glDisplay() {
 	camera->setMatrix();
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
 	// render game objects
 	renderer->stage1();
-	glutSolidCube(0.1f);
-	//table->render();
-	//ball->render();
-	//for (int i = 0; i < N_RUNNERS; i++)
-	//	runnerBalls[i]->render();
-	//for (int i = 0; i < N_LAZY; i++)
-	//	lazyBalls[i]->render();
-	//flying->render();
-	//flag->render();
+	table->render();
+	ball->render();
+	for (int i = 0; i < N_RUNNERS; i++)
+		runnerBalls[i]->render();
+	for (int i = 0; i < N_LAZY; i++)
+		lazyBalls[i]->render();
+	flying->render();
+	flag->render();
 
 	renderer->stage2();
-	glutSolidCube(0.1f);
-	//table->render();
-	//ball->render();
-	//for (int i = 0; i < N_RUNNERS; i++)
-	//	runnerBalls[i]->render();
-	//for (int i = 0; i < N_LAZY; i++)
-	//	lazyBalls[i]->render();
-	//flying->render();
-	//flag->render();
+	table->render();
+	ball->render();
+	for (int i = 0; i < N_RUNNERS; i++)
+		runnerBalls[i]->render();
+	for (int i = 0; i < N_LAZY; i++)
+		lazyBalls[i]->render();
+	flying->render();
+	flag->render();
 
 	renderer->stage3();
-	glutSolidCube(0.1f);
-	//table->render();
-	//ball->render();
-	//for (int i = 0; i < N_RUNNERS; i++)
-	//	runnerBalls[i]->render();
-	//for (int i = 0; i < N_LAZY; i++)
-	//	lazyBalls[i]->render();
-	//flying->render();
-	//flag->render();
+	table->render();
+	ball->render();
+	for (int i = 0; i < N_RUNNERS; i++)
+		runnerBalls[i]->render();
+	for (int i = 0; i < N_LAZY; i++)
+		lazyBalls[i]->render();
+	flying->render();
+	flag->render();
 
 	renderer->end();
 
 	// render UI
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	cooldown_bar->render();

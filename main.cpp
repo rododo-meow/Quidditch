@@ -3,7 +3,7 @@
 using namespace Eigen;
 using namespace std;
 
-#define USE_NVIDIA
+//#define USE_NVIDIA
 
 #ifdef USE_NVIDIA
 extern "C" {

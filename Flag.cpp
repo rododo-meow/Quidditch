@@ -54,15 +54,10 @@ void Flag::updateKeyPoints() {
 			key_points[ORDER - 1 + i][ORDER - 1 + N_LENGTH_POINTS + j][1] = key_points[ORDER - 1 + i][ORDER - 1 + N_LENGTH_POINTS - 1][1];
 			key_points[ORDER - 1 + i][ORDER - 1 + N_LENGTH_POINTS + j][2] = key_points[ORDER - 1 + i][ORDER - 1 + N_LENGTH_POINTS - 1][2];
 		}
-	for (int i = 0; i < ORDER - 1; i++)
-		for (int j = 0; j < ORDER - 1 + N_LENGTH_POINTS + ORDER - 1; j++) {
-			key_points[i][j][0] = key_points[ORDER - 1][j][0];
-			key_points[i][j][1] = key_points[ORDER - 1][j][1];
-			key_points[i][j][2] = key_points[ORDER - 1][j][2];
-			key_points[ORDER - 1 + N_WIDTH_POINTS + i][j][0] = key_points[ORDER - 1 + N_WIDTH_POINTS - 1][j][0];
-			key_points[ORDER - 1 + N_WIDTH_POINTS + i][j][1] = key_points[ORDER - 1 + N_WIDTH_POINTS - 1][j][1];
-			key_points[ORDER - 1 + N_WIDTH_POINTS + i][j][2] = key_points[ORDER - 1 + N_WIDTH_POINTS - 1][j][2];
-		}
+	for (int i = 0; i < ORDER - 1; i++) {
+		memcpy(&key_points[i][0][0], &key_points[ORDER - 1][0][0], sizeof(key_points[0]));
+		memcpy(&key_points[ORDER - 1 + N_WIDTH_POINTS + i][0][0], &key_points[ORDER - 1 + N_WIDTH_POINTS - 1][0][0], sizeof(key_points[0]));
+	}
 }
 
 Flag::Flag(float flag_height, float flag_length, float flag_width, const std::string &tex_path) : flag_height(flag_height), flag_length(flag_length), flag_width(flag_width) {
@@ -98,7 +93,9 @@ Flag::Flag(float flag_height, float flag_length, float flag_width, const std::st
 	for (int i = 0; i < ORDER - 1; i++)
 		sknot[ORDER - 1 + ORDER + N_WIDTH_POINTS + i] = tknot[ORDER - 1 + ORDER + N_LENGTH_POINTS + i] = 1;
 	nurbs = gluNewNurbsRenderer();
-	gluNurbsProperty(nurbs, GLU_SAMPLING_TOLERANCE, 100.0);
+	gluNurbsProperty(nurbs, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
+	gluNurbsProperty(nurbs, GLU_U_STEP, 30);
+	gluNurbsProperty(nurbs, GLU_V_STEP, 30);
 	gluNurbsProperty(nurbs, GLU_DISPLAY_MODE, GLU_FILL);
 	gluNurbsCallback(nurbs, GLU_ERROR, (void(__stdcall *)()) nurbsError);
 	quad = gluNewQuadric();
@@ -111,7 +108,7 @@ void Flag::update(float deltaTime) {
 			masses_v[i][j] += Vector3f(0, -g * deltaTime, 0);
 
 	// apply wind
-	Vector3f WIND = vec4To3(matRotateAroundY(rand(-30, 30)) * Vector4f(rand(WIND_FORCE * 0.3f, WIND_FORCE) / M * deltaTime, 0, 0, 1));
+	Vector3f WIND = vec4To3(matRotateAroundY(rand(-30, 30)) * Vector4f(-rand(WIND_FORCE * 0.3f, WIND_FORCE) / M * deltaTime, 0, 0, 1));
 	for (int i = 0; i < N_WIDTH_POINTS; i++)
 		for (int j = 1; j < N_LENGTH_POINTS; j++)
 			masses_v[i][j] += WIND;
@@ -192,11 +189,10 @@ void Flag::update(float deltaTime) {
 }
 
 void Flag::_render() {
-	return;
+	glEnable(GL_AUTO_NORMAL);
 	glDisable(GL_CULL_FACE);
 	glTranslatef(0, flag_height - flag_width, 0);
 	texture->enable();
-	glEnable(GL_AUTO_NORMAL);
 	gluBeginSurface(nurbs);
 	gluNurbsSurface(
 		nurbs,

@@ -29,6 +29,7 @@ inline void glLoadMatrix(GLenum pname, const Eigen::Matrix4f &matrix) {
 		for (int j = 0; j < 4; j++)
 			mat[i * 4 + j] = matrix(j, i);
 	glLoadMatrixf(mat);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 inline void glMultiMatrix(const Eigen::Matrix4f &matrix) {

@@ -42,6 +42,7 @@ public:
 		setColor(rgba[0], rgba[1], rgba[2], rgba[3]);
 	}
 	inline void render() {
+		glLoadIdentity();
 		glMultiMatrix(matTranslate(object->getPosition()));
 		glMultiMatrix(object->getRotation());
 		glMultiMatrix(matScale(object->getScale()));
@@ -50,9 +51,6 @@ public:
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
 		glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 		this->_render();
-		glMultiMatrix(matScale(1 / object->getScale().x(), 1 / object->getScale().y(), 1 / object->getScale().z()));
-		glMultiMatrix(object->getRotation().inverse());
-		glMultiMatrix(matTranslate(-object->getPosition()));
 	}
 };
 
