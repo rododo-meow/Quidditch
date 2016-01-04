@@ -4,6 +4,9 @@
 #define _GAME_PARAM_H_
 
 namespace GameParam {
+	static const char *BALL_OBJ_FILENAME = "ObjModel/ball.obj";
+	static const char *TABLE_OBJ_FILENAME = "ObjModel/table.obj";
+
 	static const bool FULLSCREEN = false;
 	static const int DEFAULT_WINDOW_WIDTH = 640;
 	static const int DEFAULT_WINDOW_HEIGHT = 480;
@@ -39,6 +42,12 @@ namespace GameParam {
 	static const float FLYING_MAX_X = TABLE_LENGTH * 1.5f;
 	static const float FLYING_MIN_Z = -TABLE_WIDTH * 1.5f;
 	static const float FLYING_MAX_Z = TABLE_WIDTH * 1.5f;
+	static const float FLAG_POSITION_X = 0.f;
+	static const float FLAG_POSITION_Y = 0.0f;
+	static const float FLAG_POSITION_Z = -0.4f;
+	static const float FLAG_HEIGHT = 0.7f;
+	static const float FLAG_LENGTH = 0.5f;
+	static const float FLAG_WIDTH = 0.3f;
 
 	static const int N_RUNNERS = 6;
 	static const int N_LAZY = 6;

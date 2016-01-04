@@ -8,12 +8,7 @@
 using namespace Eigen;
 using namespace GameParam;
 
-Flying::Flying(float radius) : Ball(radius, 10, false), state(S_FLOATING) {
-	bind(this);
-}
-
-void Flying::_render() {
-	glutSolidSphere(radius, 40, 30);
+Flying::Flying(const char *filename, float radius) : OBJBall(filename, radius, 10, false), state(S_FLOATING) {
 }
 
 void Flying::think(float deltaTime, Phys *phys) {

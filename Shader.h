@@ -11,6 +11,7 @@ class Shader {
 	friend class ShaderProgram;
 public:
 	Shader(int type, const char *code);
+	static Shader* loadFromFile(int type, const char *filename);
 	~Shader();
 };
 

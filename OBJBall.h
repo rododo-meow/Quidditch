@@ -23,7 +23,7 @@ private:
 	}
 public:
 	OBJDrawable * const drawable;
-	OBJBall(const std::string &filename, float radius) : Ball(radius, 0.1f, true), drawable(new OBJDrawable(filename)) {
+	OBJBall(const std::string &filename, float radius, float m = 0.1f, bool collideWithTable = true) : Ball(radius, m, collideWithTable), drawable(new OBJDrawable(filename)) {
 		drawable->bind(this);
 		setScale(Eigen::Vector3f(radius / 0.05f, radius / 0.05f, radius / 0.05f));
 		addPositionChanged(_positionChanged, this);

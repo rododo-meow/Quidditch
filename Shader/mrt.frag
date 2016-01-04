@@ -8,7 +8,7 @@ layout(location = 0) out vec4 outAmbientColor;
 layout(location = 1) out vec4 outFullColor;
 
 void main() {
-    vec4 color = texture2D(texID, texCoord);
+    vec4 color = texture(texID, texCoord);
     outAmbientColor = ambientColor * color;
     outFullColor = fullLightColor * color;
 }

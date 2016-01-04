@@ -1,5 +1,5 @@
 #include "ProgressBar.h"
-#include <gl/freeglut.h>
+#include "gl.h"
 
 ProgressBar::ProgressBar() : 
 	color_left{ 1, 1, 1, 1 }, color_right{ 1, 1, 1, 1 }, position({ 0, 0 }), width(0.1f), height(0.03f), progress(1) {

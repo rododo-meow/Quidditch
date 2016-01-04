@@ -1,5 +1,5 @@
 #include "Label.h"
-#include <gl/freeglut.h>
+#include "gl.h"
 
 using namespace std;
 void Label::render() {

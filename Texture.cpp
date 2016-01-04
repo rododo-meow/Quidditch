@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include <gl/glew.h>
+#include "gl.h"
 #include "turbojpeg/turbojpeg.h"
 
 std::map<std::string, Texture*> Texture::loadedTex;

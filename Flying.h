@@ -3,11 +3,10 @@
 #ifndef _FLYING_H_
 #define _FLYING_H_
 
-#include "Ball.h"
+#include "OBJBall.h"
 
 class Phys;
-class Flying : public Ball, public Drawable {
-	void _render() override;
+class Flying : public OBJBall {
 	Eigen::Vector3f target;
 	enum {
 		S_RUSHING,
@@ -17,7 +16,7 @@ class Flying : public Ball, public Drawable {
 		S_FLOATING
 	} state;
 public:
-	Flying(float radius);
+	Flying(const char *filename, float radius);
 	void think(float deltaTime, Phys *phys);
 };
 

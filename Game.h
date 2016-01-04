@@ -3,8 +3,7 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include <gl/glew.h>
-#include <gl/freeglut.h>
+#include "gl.h"
 #include <sys/timeb.h>
 #include "Eigen/Eigen"
 #include "GameParam.h"
@@ -40,6 +39,8 @@ private:
 	int mouse_x, mouse_y;
 
 	// Callbacks
+	static void glDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) { Instance._glDebug(source, type, id, severity, length, message); }
+	void _glDebug(int source, int type, unsigned int id, int severity, unsigned int len, const char *message);
 	static void glDisplay() { Instance._glDisplay(); }
 	void _glDisplay();
 	static void glMouseMove(int x, int y) { Instance._glMouseMove(x, y); }

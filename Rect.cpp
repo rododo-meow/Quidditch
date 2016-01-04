@@ -1,5 +1,5 @@
 #include "Rect.h"
-#include <gl/freeglut.h>
+#include "gl.h"
 
 Rect::Rect() :
 	color{ 1, 1, 1, 1 }, position({ -1, -1 }), width(1), height(1) {

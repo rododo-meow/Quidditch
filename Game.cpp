@@ -58,7 +58,9 @@ void Game::_glDisplay() {
 	for (int i = 0; i < N_LAZY; i++)
 		lazyBalls[i]->render();
 	flying->render();
+	renderer->setFlag(true);
 	flag->render();
+	renderer->setFlag(false);
 
 	renderer->stage2();
 	table->render();
@@ -68,7 +70,9 @@ void Game::_glDisplay() {
 	for (int i = 0; i < N_LAZY; i++)
 		lazyBalls[i]->render();
 	flying->render();
+	renderer->setFlag(true);
 	flag->render();
+	renderer->setFlag(false);
 
 	renderer->stage3();
 	table->render();
@@ -78,7 +82,9 @@ void Game::_glDisplay() {
 	for (int i = 0; i < N_LAZY; i++)
 		lazyBalls[i]->render();
 	flying->render();
+	renderer->setFlag(true);
 	flag->render();
+	renderer->setFlag(false);
 
 	renderer->end();
 
@@ -226,6 +232,12 @@ void Game::_glKeyboard(int key) {
 		if ((camera->getPosition() - ball->getPosition()).norm() < MAX_VIEW_DISTANCE)
 			camera->backward(0.1f);
 		break;
+	case 'a':
+		camera->left(0.1f);
+		break;
+	case 'd':
+		camera->right(0.1f);
+		break;
 	case VK_ESCAPE:
 		glutLeaveMainLoop();
 		break;
@@ -256,16 +268,16 @@ void Game::initGameObject() {
 	phys = new Phys();
 	phys->addAfterCollision(collision, this);
 
-	table = new OBJObject("ObjModel/table.obj");
+	table = new OBJObject(TABLE_OBJ_FILENAME);
 
-	ball = new OBJBall("ObjModel/ball.obj", BALL_RADIUS);
+	ball = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);
 	ball->teleport(Vector3f({ 0.f, TABLE_FACE_Y + BALL_RADIUS, 0.f }));
 	ball->data = ball;
 	phys->addBall(ball);
 	phys->setVelocity(ball, Vector3f({ -INIT_VELOCITY, 0.f, 0.f }));
 
 	for (int i = 0; i < N_RUNNERS; i++) {
-		runnerBalls[i] = new OBJBall("ObjModel/ball.obj", BALL_RADIUS);
+		runnerBalls[i] = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);
 		runnerBalls[i]->data = runnerBalls;
 		runnerBalls[i]->teleport(Vector3f({
 			rand(-TABLE_LENGTH / 2 + BALL_RADIUS, TABLE_LENGTH / 2 - BALL_RADIUS),
@@ -277,7 +289,7 @@ void Game::initGameObject() {
 	}
 
 	for (int i = 0; i < N_LAZY; i++) {
-		lazyBalls[i] = new OBJBall("ObjModel/ball.obj", BALL_RADIUS);
+		lazyBalls[i] = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);
 		lazyBalls[i]->data = lazyBalls;
 		lazyBalls[i]->teleport(Vector3f({
 			rand(-TABLE_LENGTH / 2 + BALL_RADIUS, TABLE_LENGTH / 2 - BALL_RADIUS),
@@ -293,14 +305,14 @@ void Game::initGameObject() {
 	score_label->setPosition(Vector2f({ SCORE_X, SCORE_Y }));
 	setScore(getScore());
 
-	flying = new Flying(BALL_RADIUS);
+	flying = new Flying(BALL_OBJ_FILENAME, BALL_RADIUS);
 	flying->data = flying;
 	phys->addBall(flying);
 	flying->setPosition(Vector3f({ 
 		rand(FLYING_MIN_X, FLYING_MAX_X),
 		rand(TABLE_FACE_Y + BALL_RADIUS + FLYING_MIN_FLY_HEIGHT, TABLE_FACE_Y + BALL_RADIUS + FLYING_MAX_FLY_HEIGHT),
 		rand(FLYING_MIN_Z, FLYING_MAX_Z)}));
-	flying->setColor(1, 1, 0.3f, 1);
+	flying->drawable->setColor(1, 1, 0.3f, 1);
 
 	cooldown_bar = new ProgressBar();
 	cooldown_bar->setPosition(Vector2f({ COOLDOWN_X, COOLDOWN_Y }));
@@ -322,9 +334,10 @@ void Game::initGameObject() {
 	fps_label->setColor(1, 1, 1, 1);
 	fps_label->setPosition(Vector2f({ FPS_LABEL_X, FPS_LABEL_Y }));
 
-	flag = new Flag(0.4f, 0.4f, 0.3f, "ObjModel/flag.jpg");
-	flag->setPosition({ 0, 0, 0 });
-	//flag->setColor(1, 0, 0, 1);
+	flag = new Flag(FLAG_HEIGHT, FLAG_LENGTH, FLAG_WIDTH, "ObjModel/flag.jpg");
+	flag->setPosition({ FLAG_POSITION_X, FLAG_POSITION_Y, FLAG_POSITION_Z });
+	flag->setAmbient(0.3f);
+	flag->setDiffuse(0.5f);
 }
 
 void Game::initLight() {
@@ -393,6 +406,10 @@ void Game::_glMouseClick(int button) {
 		speedUp();
 }
 
+void Game::_glDebug(int source, int type, unsigned int id, int severity, unsigned int len, const char *message) {
+	printf("GL debug: %s\n", message);
+}
+
 void Game::init() {
 	if (!winID) {
 		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -435,8 +452,12 @@ void Game::init() {
 		printf("OpenGL version %s\n", glGetString(GL_VERSION));
 		printf("OpenGL vendor %s\n", glGetString(GL_VENDOR));
 	}
+	CHECK_GL;
 	destroy();
+	CHECK_GL;
 
+	glDebugMessageCallback((GLDEBUGPROC) glDebug, NULL);
+	//glEnable(GL_DEBUG_OUTPUT);
 	glutDisplayFunc(glDisplay);
 	glDepthFunc(GL_LESS);
 	glutMotionFunc(glMouseMove);
@@ -447,10 +468,15 @@ void Game::init() {
 	glutCloseFunc(glClose);
 
 	initGL();
+	CHECK_GL
 	renderer = new ShadowRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
+	CHECK_GL
 	initGameObject();
+	CHECK_GL
 	initCamera();
+	CHECK_GL
 	initLight();
+	CHECK_GL
 
 	setScore(0);
 	isGameOver = false;

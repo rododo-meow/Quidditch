@@ -7,11 +7,11 @@
 
 using namespace Eigen;
 
-const float Flag::K = 7.f;
+const float Flag::K = 5.f;
 const float Flag::M = .1f;
 const float Flag::g = 5.f;
-const float Flag::RESISTANCE_FACTOR = 3.3f;
-const float Flag::WIND_FORCE = 1.3f;
+const float Flag::RESISTANCE_FACTOR = 0.6f;
+const float Flag::WIND_FORCE = 1.7f;
 
 Flag::~Flag() {
 	gluDeleteNurbsRenderer(nurbs);
@@ -108,7 +108,7 @@ void Flag::update(float deltaTime) {
 			masses_v[i][j] += Vector3f(0, -g * deltaTime, 0);
 
 	// apply wind
-	Vector3f WIND = vec4To3(matRotateAroundY(rand(-30, 30)) * Vector4f(-rand(WIND_FORCE * 0.3f, WIND_FORCE) / M * deltaTime, 0, 0, 1));
+	Vector3f WIND = vec4To3(matRotateAroundY(rand(-30, 30)) * Vector4f(rand(WIND_FORCE * 0.7f, WIND_FORCE) / M * deltaTime, 0, 0, 1));
 	for (int i = 0; i < N_WIDTH_POINTS; i++)
 		for (int j = 1; j < N_LENGTH_POINTS; j++)
 			masses_v[i][j] += WIND;
@@ -189,6 +189,7 @@ void Flag::update(float deltaTime) {
 }
 
 void Flag::_render() {
+	return;
 	glEnable(GL_AUTO_NORMAL);
 	glDisable(GL_CULL_FACE);
 	glTranslatef(0, flag_height - flag_width, 0);

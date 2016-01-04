@@ -3,8 +3,7 @@
 #ifndef _FLAG_H_
 #define _FLAG_H_
 
-#include <gl/glew.h>
-#include <gl/freeglut.h>
+#include "gl.h"
 #include "Eigen/Eigen"
 #include "Object.h"
 #include "Drawable.h"

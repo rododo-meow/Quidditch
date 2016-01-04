@@ -3,8 +3,7 @@
 #ifndef _GL_MAT_UTIL_H_
 #define _GL_MAT_UTIL_H_
 
-#include <gl/glew.h>
-#include <gl/freeglut.h>
+#include "gl.h"
 #include "Eigen/Eigen"
 #include <iostream>
 
