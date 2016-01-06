@@ -20,6 +20,7 @@ class ProgressBar;
 class Rect;
 class Flag;
 class ShadowRenderer;
+class Table;
 class Game {
 public:
 	static Game Instance;
@@ -87,7 +88,7 @@ private:
 	Camera *camera = NULL;
 
 	// Game objects
-	OBJObject *table = NULL;
+	Table *table = NULL;
 	OBJBall *ball = NULL;
 	OBJBall *runnerBalls[GameParam::N_RUNNERS] = {};
 	OBJBall *lazyBalls[GameParam::N_LAZY] = {};

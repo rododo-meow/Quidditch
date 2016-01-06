@@ -6,6 +6,7 @@
 namespace GameParam {
 	static const char *BALL_OBJ_FILENAME = "ObjModel/ball.obj";
 	static const char *TABLE_OBJ_FILENAME = "ObjModel/table.obj";
+	static const char *FACE_TEXTURE_FILENAME = "ObjModel/face.jpg";
 
 	static const bool FULLSCREEN = false;
 	static const int DEFAULT_WINDOW_WIDTH = 640;

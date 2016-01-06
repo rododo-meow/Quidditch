@@ -95,11 +95,9 @@ ShadowRenderer::ShadowRenderer(int WINDOW_WIDTH, int WINDOW_HEIGHT) : WINDOW_WID
 	CHECK_GL;
 	{
 		float data[] = {
-			-1, -1, 0, 0,
 			1, -1, 1, 0,
 			1, 1, 1, 1,
 			-1, -1, 0, 0,
-			1, 1, 1, 1,
 			-1, 1, 0, 1
 		};
 		glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
@@ -193,7 +191,7 @@ void ShadowRenderer::end() {
 	glStencilFunc(GL_EQUAL, 0, 0xFFFFFFFF);
 
 	glBindVertexArray(vaoRect);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
 	programRect->disable();
 

@@ -182,6 +182,7 @@ void OBJDrawable::Model::render() {
 		it->second->enable();
 		glDrawElementsBaseVertex(GL_TRIANGLES, it->first.second, GL_UNSIGNED_INT, (void *) (it->first.first * sizeof(unsigned int)), 0);
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

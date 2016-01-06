@@ -54,6 +54,9 @@
     <ClCompile Include="Texture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OBJObject.h">
@@ -120,6 +123,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

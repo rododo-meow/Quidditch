@@ -12,6 +12,7 @@
 #include "Rect.h"
 #include "Flag.h"
 #include "Shadow.h"
+#include "Table.h"
 
 using namespace std;
 using namespace Eigen;
@@ -264,11 +265,17 @@ void Game::initGL() {
 	glClearDepth(20.f);
 }
 
+float tmp[3][3] = {
+	0, 0, 0,
+	0, 0.2f, 0,
+	0, 0, 0
+};
+
 void Game::initGameObject() {
 	phys = new Phys();
 	phys->addAfterCollision(collision, this);
 
-	table = new OBJObject(TABLE_OBJ_FILENAME);
+	table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, 2, 2, &tmp[0][0]);
 
 	ball = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);
 	ball->teleport(Vector3f({ 0.f, TABLE_FACE_Y + BALL_RADIUS, 0.f }));

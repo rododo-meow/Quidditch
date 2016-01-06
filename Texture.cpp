@@ -72,5 +72,5 @@ void Texture::enable() {
 }
 
 void Texture::disable() {
-	glBindTexture(GL_TEXTURE, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
