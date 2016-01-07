@@ -18,14 +18,17 @@ class Table : public Object {
 	Texture *texture;
 public:
 	const size_t N_WIDTH, N_LENGTH;
+	const float WIDTH, LENGTH;
 	const Eigen::Vector3f * const normals;
+	const Eigen::Vector3f * const vertex;
 	const enum Direction {
 		ZS_YX, YS_ZX
 	} * const directions;
 	OBJDrawable * const drawable;
-	Table(const std::string &model, const std::string &faceTexture, size_t N_WIDTH, size_t N_LENGTH, const float *height);
+	Table(const std::string &model, const std::string &faceTexture, float WIDTH, float LENGTH, size_t N_WIDTH, size_t N_LENGTH, const float *height);
 	~Table();
 	void render();
+	float getHeight(float x, float z) const;
 };
 
 #endif

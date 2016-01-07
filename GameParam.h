@@ -25,10 +25,10 @@ namespace GameParam {
 	static const float BALL_RADIUS = 0.025f;
 	static const float INIT_VELOCITY = 0.3f;
 	static const float RUNNER_INIT_VELOCITY = INIT_VELOCITY / 1.1f;
-	static const float ACCELERATION = INIT_VELOCITY / 3;
-	static const float RUNNER_ACCELERATION = RUNNER_INIT_VELOCITY / 10;
-	static const float TURNING_FACTOR = 0.85f;
-	static const float RUNNER_TURNING_FACTOR = 0.2f;
+	static const float ACCELERATION = INIT_VELOCITY * 1.5;
+	static const float RUNNER_ACCELERATION = RUNNER_INIT_VELOCITY / 5;
+	static const float TURNING_FACTOR = 1.35f;
+	static const float RUNNER_TURNING_FACTOR = 0.3f;
 	static const float SPEED_UP_VELOCITY = INIT_VELOCITY * 2.5f;
 	static const float SPEED_UP_COOLDOWN = 5.f;
 	static const float FLYING_RUSH_VELOCITY = INIT_VELOCITY * 5;
@@ -78,6 +78,8 @@ namespace GameParam {
 
 	static const float FADE_OUT_DURATION = 5.f;
 	static const float FADE_OUT_ALPHA = .6f;
+
+	static const float G = 5.f;
 };
 
 #endif

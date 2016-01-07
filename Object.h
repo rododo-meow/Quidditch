@@ -33,7 +33,7 @@ public:
 		for (BeforeChangePositionCallbacks::iterator it = beforeChangePositionCallback.begin(); it != beforeChangePositionCallback.end(); it++)
 			if (!it->first(it->second, this, this->position, position))
 				return;
-		Eigen::Vector3f oldPosition = std::move(this->position);
+		Eigen::Vector3f oldPosition = this->position;
 		this->position = position;
 		for (PositionChangedCallbacks::iterator it = positionChangedCallback.begin(); it != positionChangedCallback.end(); it++)
 			it->first(it->second, this, oldPosition, this->position);
@@ -43,7 +43,7 @@ public:
 		for (BeforeChangeRotationCallbacks::iterator it = beforeChangeRotationCallback.begin(); it != beforeChangeRotationCallback.end(); it++)
 			if (!it->first(it->second, this, this->rotation, rotation))
 				return;
-		Eigen::Matrix4f oldRotation = std::move(this->rotation);
+		Eigen::Matrix4f oldRotation = this->rotation;
 		this->rotation = rotation;
 		for (RotationChangedCallbacks::iterator it = rotationChangedCallback.begin(); it != rotationChangedCallback.end(); it++)
 			it->first(it->second, this, oldRotation, this->rotation);

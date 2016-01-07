@@ -88,6 +88,7 @@ private:
 	Camera *camera = NULL;
 
 	// Game objects
+public:
 	Table *table = NULL;
 	OBJBall *ball = NULL;
 	OBJBall *runnerBalls[GameParam::N_RUNNERS] = {};

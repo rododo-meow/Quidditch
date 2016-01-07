@@ -6,14 +6,21 @@
 
 using namespace GameParam;
 
-Table::Table(const std::string &model, const std::string &faceTexture, size_t N_WIDTH, size_t N_LENGTH, const float *height) : 
+Table::Table(const std::string &model, const std::string &faceTexture, float WIDTH, float LENGTH, size_t N_WIDTH, size_t N_LENGTH, const float *height) : 
 		drawable(new OBJDrawable(model)), 
+		WIDTH(WIDTH),
+		LENGTH(LENGTH),
 		N_WIDTH(N_WIDTH), 
 		N_LENGTH(N_LENGTH), 
 		texture(Texture::load(faceTexture.c_str())), 
 		normals(new Eigen::Vector3f[N_WIDTH * N_LENGTH * 2]),
-		directions(new Direction[N_WIDTH * N_LENGTH]) {
+		directions(new Direction[N_WIDTH * N_LENGTH]),
+		vertex(new Eigen::Vector3f[(N_WIDTH + 1) * (N_LENGTH + 1)]) {
 	drawable->bind(this);
+
+	for (size_t i = 0; i <= N_WIDTH; i++)
+		for (size_t j = 0; j <= N_LENGTH; j++)
+			*const_cast<Eigen::Vector3f*>(&vertex[i * (N_LENGTH + 1) + j]) = Eigen::Vector3f(TABLE_LENGTH * j / N_LENGTH, height[i* (N_LENGTH + 1) + j], TABLE_WIDTH * i / N_WIDTH);
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -92,4 +99,31 @@ void Table::render() {
 	glDrawArrays(GL_TRIANGLES, 0, N_LENGTH * N_WIDTH * 2 * 3);
 	texture->disable();
 	glBindVertexArray(0);
+}
+
+float Table::getHeight(float x, float z) const {
+	int i = z * N_WIDTH / WIDTH, j = x * N_LENGTH / LENGTH;
+	float off_x = x * N_LENGTH / LENGTH - j, off_z = z * N_WIDTH / WIDTH - i;
+	switch (directions[i * N_LENGTH + j]) {
+	case ZS_YX:
+		if (off_x + off_z >= 1)
+			return vertex[(i + 1) * (N_LENGTH + 1) + j + 1].y() +
+				(vertex[(i + 1) * (N_LENGTH + 1) + j].y() - vertex[(i + 1) * (N_LENGTH + 1) + j + 1].y()) * (1 - off_x) +
+				(vertex[i * (N_LENGTH + 1) + j + 1].y() - vertex[(i + 1) * (N_LENGTH + 1) + j + 1].y()) *(1 - off_z);
+		else
+			return vertex[i * (N_LENGTH + 1) + j].y() +
+				(vertex[i * (N_LENGTH + 1) + j + 1].y() - vertex[i * (N_LENGTH + 1) + j].y()) * (1 - off_x) +
+				(vertex[(i + 1) * (N_LENGTH + 1) + j].y() - vertex[i * (N_LENGTH + 1) + j].y()) *(1 - off_z);
+		break;
+	case YS_ZX:
+		if (off_x >= off_z)
+			return vertex[i * (N_LENGTH + 1) + j + 1].y() +
+				(vertex[i * (N_LENGTH + 1) + j].y() - vertex[i * (N_LENGTH + 1) + j + 1].y()) * (1 - off_x) +
+				(vertex[(i + 1) * (N_LENGTH + 1) + j + 1].y() - vertex[i * (N_LENGTH + 1) + j + 1].y()) * off_z;
+		else
+			return vertex[(i + 1) * (N_LENGTH + 1) + j].y() +
+				(vertex[(i + 1) * (N_LENGTH + 1) + j + 1].y() - vertex[(i + 1) * (N_LENGTH + 1) + j].y()) * off_x +
+				(vertex[i * (N_LENGTH + 1) + j].y() - vertex[(i + 1) * (N_LENGTH + 1) + j].y()) * (1 - off_z);
+		break;
+	}
 }

@@ -233,11 +233,8 @@ void Game::_glKeyboard(int key) {
 		if ((camera->getPosition() - ball->getPosition()).norm() < MAX_VIEW_DISTANCE)
 			camera->backward(0.1f);
 		break;
-	case 'a':
-		camera->left(0.1f);
-		break;
-	case 'd':
-		camera->right(0.1f);
+	case 'f':
+		phys->update(0.06f);
 		break;
 	case VK_ESCAPE:
 		glutLeaveMainLoop();
@@ -267,7 +264,7 @@ void Game::initGL() {
 
 float tmp[3][3] = {
 	0, 0, 0,
-	0, 0.2f, 0,
+	0, 0.06f, 0,
 	0, 0, 0
 };
 
@@ -275,7 +272,8 @@ void Game::initGameObject() {
 	phys = new Phys();
 	phys->addAfterCollision(collision, this);
 
-	table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, 2, 2, &tmp[0][0]);
+	table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, TABLE_WIDTH, TABLE_LENGTH, 2, 2, &tmp[0][0]);
+	phys->addTable(table);
 
 	ball = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);
 	ball->teleport(Vector3f({ 0.f, TABLE_FACE_Y + BALL_RADIUS, 0.f }));
@@ -286,10 +284,11 @@ void Game::initGameObject() {
 	for (int i = 0; i < N_RUNNERS; i++) {
 		runnerBalls[i] = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);
 		runnerBalls[i]->data = runnerBalls;
+		float x = rand(BALL_RADIUS, TABLE_LENGTH - 2 * BALL_RADIUS), z = rand(BALL_RADIUS, TABLE_WIDTH - 2 * BALL_RADIUS);
 		runnerBalls[i]->teleport(Vector3f({
-			rand(-TABLE_LENGTH / 2 + BALL_RADIUS, TABLE_LENGTH / 2 - BALL_RADIUS),
-			TABLE_FACE_Y + BALL_RADIUS,
-			rand(-TABLE_WIDTH / 2 + BALL_RADIUS, TABLE_WIDTH / 2 - BALL_RADIUS) }));
+			x - TABLE_LENGTH / 2,
+			TABLE_FACE_Y + table->getHeight(x, z) + BALL_RADIUS,
+			z}));
 		runnerBalls[i]->drawable->setColor(1.f, 0.f, 0.f, 1.f);
 		phys->addBall(runnerBalls[i]);
 		phys->setVelocity(runnerBalls[i], vec4To3(matRotateAroundY(360.f * rand() / RAND_MAX) * Vector4f({ -RUNNER_INIT_VELOCITY, 0.f, 0.f, 1.f })));

@@ -8,7 +8,7 @@
 #include "Eigen/Eigen"
 
 class Ball;
-
+class Table;
 class Phys {
 	struct Data {
 		Eigen::Vector3f velocity;
@@ -16,6 +16,7 @@ class Phys {
 		Data() : velocity(0.f, 0.f, 0.f), force(0.f, 0.f, 0.f) {}
 	};
 	std::map<Ball*, Data*> balls;
+	std::list<Table*> tables;
 public:
 	typedef void (*AfterCollision)(void *that, Ball *ball1, Ball *ball2);
 private:
@@ -25,6 +26,7 @@ public:
 		afterCollisionCallbacks.push_back(std::make_pair(callback, that));
 	}
 	Phys() {};
+	void addTable(Table *table) { tables.push_back(table); }
 	void addBall(Ball *ball) { balls.insert(std::make_pair(ball, new Data())); }
 	void update(float deltaTime);
 	const Eigen::Vector3f getVelocity(Ball *ball) const { return balls.at(ball)->velocity; }
