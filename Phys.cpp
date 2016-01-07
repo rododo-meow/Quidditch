@@ -37,8 +37,11 @@ float triangleDistance(const Eigen::Vector3f P, const Eigen::Vector3f &A, const 
 
 void Phys::update(float deltaTime) {
 	for (std::map<Ball*, Data*>::iterator it = balls.begin(); it != balls.end(); it++) {
+		// apply gravity
+		if (it->first->collideWithTable)
+			it->second->velocity += Eigen::Vector3f(0, -1, 0) * G * deltaTime;
+
 		// update velocity
-		it->second->velocity += Eigen::Vector3f(0, -1, 0) * G * deltaTime;
 		it->second->velocity += it->second->force * deltaTime;
 
 		// update position

@@ -6,6 +6,7 @@
 #include "OBJBall.h"
 
 class Phys;
+class Table;
 class Flying : public OBJBall {
 	Eigen::Vector3f target;
 	enum {
@@ -15,9 +16,11 @@ class Flying : public OBJBall {
 		S_UPING,
 		S_FLOATING
 	} state;
+	Table *table;
 public:
 	Flying(const char *filename, float radius);
 	void think(float deltaTime, Phys *phys);
+	inline void setTable(Table *table) { this->table = table; }
 };
 
 #endif

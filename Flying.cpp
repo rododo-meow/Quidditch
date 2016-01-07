@@ -4,6 +4,7 @@
 #include "GameParam.h"
 #include "Eigen/Eigen"
 #include "Phys.h"
+#include "Table.h"
 
 using namespace Eigen;
 using namespace GameParam;
@@ -18,17 +19,18 @@ void Flying::think(float deltaTime, Phys *phys) {
 		if (p < FLYING_RUSH_P) {
 			target = Vector3f(
 				rand(FLYING_MIN_X, FLYING_MAX_X),
-				rand(TABLE_FACE_Y + BALL_RADIUS + FLYING_MIN_FLY_HEIGHT, TABLE_FACE_Y + BALL_RADIUS + FLYING_MAX_FLY_HEIGHT),
+				table->getPosition().y() + TABLE_FACE_Y + radius + rand(FLYING_MIN_FLY_HEIGHT, FLYING_MAX_FLY_HEIGHT),
 				rand(FLYING_MIN_Z, FLYING_MAX_Z));
 			state = S_RUSHING;
 			break;
 		}
 		p -= FLYING_RUSH_P;
 		if (p < FLYING_RELAX_P) {
+			float x = rand(radius, table->LENGTH - 2 * radius), z = rand(radius, table->WIDTH - 2 * radius);
 			target = Vector3f(
-				rand(-TABLE_LENGTH / 2 + radius, TABLE_LENGTH / 2 - radius),
-				TABLE_FACE_Y + BALL_RADIUS,
-				rand(-TABLE_WIDTH / 2 + radius, TABLE_WIDTH / 2 - radius));
+				x - table->LENGTH / 2 + table->getPosition().x(),
+				table->getHeight(x, z) + TABLE_FACE_Y + table->getPosition().y() + radius,
+				z - table->WIDTH / 2 + table->getPosition().z());
 			state = S_DOWNING;
 			break;
 		}
@@ -53,6 +55,7 @@ void Flying::think(float deltaTime, Phys *phys) {
 				v.y() = 0;
 			v.normalize();
 			phys->setVelocity(this, v * FLYING_DOWN_VELOCITY);
+			std::cout << getPosition().transpose() << std::endl;
 		}
 		break;
 	case S_DOWN: {

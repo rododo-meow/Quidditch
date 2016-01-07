@@ -312,6 +312,7 @@ void Game::initGameObject() {
 	setScore(getScore());
 
 	flying = new Flying(BALL_OBJ_FILENAME, BALL_RADIUS);
+	flying->setTable(table);
 	flying->data = flying;
 	phys->addBall(flying);
 	flying->setPosition(Vector3f({ 
