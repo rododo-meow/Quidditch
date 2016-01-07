@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Flag.h" />
     <ClInclude Include="gl.h" />
+    <ClInclude Include="Perlin.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="GameParam.h" />

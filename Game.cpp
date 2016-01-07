@@ -13,6 +13,7 @@
 #include "Flag.h"
 #include "Shadow.h"
 #include "Table.h"
+#include "Perlin.h"
 
 using namespace std;
 using namespace Eigen;
@@ -262,17 +263,18 @@ void Game::initGL() {
 	glClearDepth(20.f);
 }
 
-float tmp[3][3] = {
-	0, 0, 0,
-	0, 0.06f, 0,
-	0, 0, 0
-};
-
 void Game::initGameObject() {
 	phys = new Phys();
 	phys->addAfterCollision(collision, this);
 
-	table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, TABLE_WIDTH, TABLE_LENGTH, 2, 2, &tmp[0][0]);
+	{
+		HeightMapPerlin perlin;
+		float tmp[5][5];
+		for (size_t i = 0; i < 5; i++)
+			for (size_t j = 0; j < 5; j++)
+				tmp[i][j] = 0.06f *perlin(4, 0.5f, i / 4.f, j / 4.f);
+		table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, TABLE_WIDTH, TABLE_LENGTH, 4, 4, &tmp[0][0]);
+	}
 	phys->addTable(table);
 
 	ball = new OBJBall(BALL_OBJ_FILENAME, BALL_RADIUS);

@@ -55,7 +55,6 @@ void Flying::think(float deltaTime, Phys *phys) {
 				v.y() = 0;
 			v.normalize();
 			phys->setVelocity(this, v * FLYING_DOWN_VELOCITY);
-			std::cout << getPosition().transpose() << std::endl;
 		}
 		break;
 	case S_DOWN: {
