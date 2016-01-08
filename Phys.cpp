@@ -125,6 +125,7 @@ void Phys::update(float deltaTime) {
 		for (std::map<Ball*, Data*>::iterator it2 = it; ++it2 != balls.end(); ) {
 			if ((position - it2->first->getPosition()).norm() < it->first->radius + it2->first->radius) {
 				Eigen::Vector3f normal = (position - it2->first->getPosition()).normalized();
+				position += normal * (it->first->radius + it2->first->radius - (position - it2->first->getPosition()).norm());
 				Eigen::Vector3f v1 = it->second->velocity, v2 = it2->second->velocity;
 				if ((v2 - v1).dot(normal) < 0)
 					continue;

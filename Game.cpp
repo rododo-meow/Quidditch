@@ -108,41 +108,38 @@ void Game::_glDisplay() {
 }
 
 void Game::_glFrame(float deltaTime) {
-	// change direction and velocity of main ball
+	// change direction of main ball
 	Eigen::Vector3f ballV = phys->getVelocity(ball);
 	ballV(1, 0) = 0;
 	if (!isGameOver) {
 		Eigen::Vector3f front = -camera->getN();
 		front(1, 0) = 0;
 		front.normalize();
-		Eigen::Vector3f cross = front.cross(ballV.normalized());
+		Eigen::Vector3f tmp = ballV;
+		tmp(1, 0) = 0;
+		tmp.normalize();
+		Eigen::Vector3f cross = front.cross(tmp);
 		if (cross(1, 0) > 0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), TURNING_FACTOR / ballV.norm()) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 		else if (cross(1, 0) < -0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), TURNING_FACTOR / ballV.norm()) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 	}
-	if (ballV.norm() < INIT_VELOCITY)
-		ballV = (ballV.norm() + deltaTime * ACCELERATION) * ballV.normalized();
-	else if (ballV.norm() > INIT_VELOCITY)
-		ballV = (ballV.norm() - deltaTime * ACCELERATION) * ballV.normalized();
-	phys->setVelocity(ball, ballV);
 
-	// change direction and velocity of runner balls
+	// change direction of runner balls
 	for (int i = 0; i < N_RUNNERS; i++) {
 		Eigen::Vector3f ballV = phys->getVelocity(runnerBalls[i]);
 		Eigen::Vector3f front = ball->getPosition() - runnerBalls[i]->getPosition();
+		front(1, 0) = 0;
 		front.normalize();
-		front = vec4To3(matRotateAroundY(rand(-30, 30)) * vec3To4(front));
-		Eigen::Vector3f cross = front.cross(ballV.normalized());
+		front = vec4To3(matRotateAroundY(rand(-3, 3)) * vec3To4(front));
+		Eigen::Vector3f tmp = ballV;
+		tmp(1, 0) = 0;
+		tmp.normalize();
+		Eigen::Vector3f cross = front.cross(tmp);
 		if (cross(1, 0) > 0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), RUNNER_TURNING_FACTOR / ballV.norm()) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 		else if (cross(1, 0) < -0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), RUNNER_TURNING_FACTOR / ballV.norm()) * vec3To4(ballV));
-		if (ballV.norm() < RUNNER_INIT_VELOCITY)
-			ballV = (ballV.norm() + deltaTime * RUNNER_ACCELERATION) * ballV.normalized();
-		else if (ballV.norm() > RUNNER_INIT_VELOCITY)
-			ballV = (ballV.norm() - deltaTime * RUNNER_ACCELERATION) * ballV.normalized();
-		phys->setVelocity(runnerBalls[i], ballV);
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 	}
 
 	// change velocity of lazy balls
@@ -160,6 +157,23 @@ void Game::_glFrame(float deltaTime) {
 	flag->update(deltaTime);
 
 	phys->update(deltaTime);
+
+	// change velocity of main ball
+	if (ballV.norm() < INIT_VELOCITY)
+		ballV = (ballV.norm() + deltaTime * ACCELERATION) * ballV.normalized();
+	else if (ballV.norm() > INIT_VELOCITY)
+		ballV = (ballV.norm() - deltaTime * ACCELERATION) * ballV.normalized();
+	phys->setVelocity(ball, ballV);
+
+	// change velocity of runner balls
+	for (int i = 0; i < N_RUNNERS; i++) {
+		Eigen::Vector3f ballV = phys->getVelocity(runnerBalls[i]);
+		if (ballV.norm() < RUNNER_INIT_VELOCITY)
+			ballV = (ballV.norm() + deltaTime * RUNNER_ACCELERATION) * ballV.normalized();
+		else if (ballV.norm() > RUNNER_INIT_VELOCITY)
+			ballV = (ballV.norm() - deltaTime * RUNNER_ACCELERATION) * ballV.normalized();
+		phys->setVelocity(runnerBalls[i], ballV);
+	}
 
 	// update cooldown bar
 	if (lastSpeedUpTime < 0 || time - lastSpeedUpTime >= SPEED_UP_COOLDOWN)
@@ -268,12 +282,12 @@ void Game::initGameObject() {
 	phys->addAfterCollision(collision, this);
 
 	{
-		HeightMapPerlin perlin;
-		float tmp[5][5];
+		HeightMapPerlin perlin(rand<size_t>());
+		float tmp[5][10];
 		for (size_t i = 0; i < 5; i++)
-			for (size_t j = 0; j < 5; j++)
-				tmp[i][j] = 0.06f *perlin(4, 0.5f, i / 4.f, j / 4.f);
-		table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, TABLE_WIDTH, TABLE_LENGTH, 4, 4, &tmp[0][0]);
+			for (size_t j = 0; j < 10; j++)
+				tmp[i][j] = 0.3f * perlin(2.f, 3, 1.f, 1.5f, i / 4.f, j / 9.f);
+		table = new Table(TABLE_OBJ_FILENAME, FACE_TEXTURE_FILENAME, TABLE_WIDTH, TABLE_LENGTH, 4, 9, &tmp[0][0]);
 	}
 	phys->addTable(table);
 
@@ -381,16 +395,21 @@ void Game::_collision(Ball *a, Ball *b) {
 	if (b->data == ball)
 		b = a, a = ball;
 	if (a->data == ball) {
-		if (b->data == runnerBalls)
-			setScore(getScore() - PENALTY_SCORE);
-		else if (b->data == lazyBalls) {
-			Vector3f va = phys->getVelocity(a), vb = phys->getVelocity(b), ccline = (a->getPosition() - b->getPosition()).normalized();
-			float v = abs(va.dot(ccline) - vb.dot(ccline));
-			setScore(getScore() + (int) (v * v * SCORE_FACTOR + BASE_SCORE));
-		} else if (b->data == flying) {
+		if (b->data == flying) {
 			setScore(getScore() + FLYING_SCORE);
 			gameOver();
+			return;
 		}
+		if (lastCollisionTime < 0 || getTime() - lastCollisionTime > SCORE_COOLDOWN) {
+			if (b->data == runnerBalls)
+				setScore(getScore() - PENALTY_SCORE);
+			else if (b->data == lazyBalls) {
+				Vector3f va = phys->getVelocity(a), vb = phys->getVelocity(b), ccline = (a->getPosition() - b->getPosition()).normalized();
+				float v = abs(va.dot(ccline) - vb.dot(ccline));
+				setScore(getScore() + (int)(v * v * SCORE_FACTOR + BASE_SCORE));
+			}
+		}
+		lastCollisionTime = getTime();
 	}
 }
 

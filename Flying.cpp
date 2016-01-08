@@ -19,7 +19,7 @@ void Flying::think(float deltaTime, Phys *phys) {
 		if (p < FLYING_RUSH_P) {
 			target = Vector3f(
 				rand(FLYING_MIN_X, FLYING_MAX_X),
-				table->getPosition().y() + TABLE_FACE_Y + radius + rand(FLYING_MIN_FLY_HEIGHT, FLYING_MAX_FLY_HEIGHT),
+				table->getPosition().y() + TABLE_FACE_Y + table->getMaxHeight() + radius + rand(FLYING_MIN_FLY_HEIGHT, FLYING_MAX_FLY_HEIGHT),
 				rand(FLYING_MIN_Z, FLYING_MAX_Z));
 			state = S_RUSHING;
 			break;
@@ -62,7 +62,7 @@ void Flying::think(float deltaTime, Phys *phys) {
 		if (p < FLYING_WAKEUP_P) {
 			target = Vector3f(
 				getPosition().x(),
-				rand(TABLE_FACE_Y + BALL_RADIUS + FLYING_MIN_FLY_HEIGHT, TABLE_FACE_Y + BALL_RADIUS + FLYING_MAX_FLY_HEIGHT),
+				table->getPosition().y() + TABLE_FACE_Y + table->getMaxHeight() + radius + rand(FLYING_MIN_FLY_HEIGHT, FLYING_MAX_FLY_HEIGHT),
 				getPosition().y());
 			state = S_UPING;
 		}

@@ -98,7 +98,9 @@ int OBJDrawable::Model::_load(const std::string &filename) {
 						texName = line + 7;
 					} else if (strncmp(line, "\tmap_Ka", 7) == 0) {
 						sscanf(line + 8, "%s", p + 1);
-						if ((texture[texName] = Texture::load(path)) == NULL)
+						if (strcmp(p + 1, "noise") == 0)
+							texture[texName] = Texture::getNoiseTexture(256, 256);
+						else if ((texture[texName] = Texture::load(path)) == NULL)
 							goto fail;
 					}
 				}

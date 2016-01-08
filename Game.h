@@ -34,6 +34,7 @@ private:
 	float startTime = -1;
 	float time = -1;
 	float lastSpeedUpTime = -1;
+	float lastCollisionTime = -1;
 	uint64_t frames = 0;
 	bool isGameOver = false;
 	int WINDOW_WIDTH, WINDOW_HEIGHT;
@@ -88,7 +89,6 @@ private:
 	Camera *camera = NULL;
 
 	// Game objects
-public:
 	Table *table = NULL;
 	OBJBall *ball = NULL;
 	OBJBall *runnerBalls[GameParam::N_RUNNERS] = {};

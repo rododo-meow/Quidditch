@@ -16,6 +16,7 @@ class Table : public Object {
 		float normal_x, normal_y, normal_z;
 	};
 	Texture *texture;
+	float maxHeight;
 public:
 	const size_t N_WIDTH, N_LENGTH;
 	const float WIDTH, LENGTH;
@@ -29,6 +30,7 @@ public:
 	~Table();
 	void render();
 	float getHeight(float x, float z) const;
+	inline float getMaxHeight() const { return maxHeight; }
 };
 
 #endif

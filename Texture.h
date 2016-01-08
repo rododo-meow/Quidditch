@@ -7,14 +7,14 @@
 
 class Texture {
 	unsigned int texID;
-	Texture(int format, int width, int height);
+	Texture(unsigned int format, size_t width, size_t height);
 	Texture(const char *path);
 	static std::map<std::string, Texture*> loadedTex;
 	~Texture();
-	int refcnt = 0;
+	int refcnt = 1;
 public:
-	static Texture* load(int format, int width, int height);
 	static Texture* load(const char *path);
+	static Texture* getNoiseTexture(size_t width, size_t height);
 	void enable();
 	void disable();
 	void unload();

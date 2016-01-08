@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Table.h"
 #include "OBJDrawable.h"
 #include "gl.h"
@@ -18,9 +20,12 @@ Table::Table(const std::string &model, const std::string &faceTexture, float WID
 		vertex(new Eigen::Vector3f[(N_WIDTH + 1) * (N_LENGTH + 1)]) {
 	drawable->bind(this);
 
+	maxHeight = 0;
 	for (size_t i = 0; i <= N_WIDTH; i++)
-		for (size_t j = 0; j <= N_LENGTH; j++)
+		for (size_t j = 0; j <= N_LENGTH; j++) {
 			*const_cast<Eigen::Vector3f*>(&vertex[i * (N_LENGTH + 1) + j]) = Eigen::Vector3f(TABLE_LENGTH * j / N_LENGTH, height[i* (N_LENGTH + 1) + j], TABLE_WIDTH * i / N_WIDTH);
+			maxHeight = std::max(height[i* (N_LENGTH + 1) + j], maxHeight);
+		}
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -114,7 +119,6 @@ float Table::getHeight(float x, float z) const {
 			return vertex[i * (N_LENGTH + 1) + j].y() +
 				(vertex[i * (N_LENGTH + 1) + j + 1].y() - vertex[i * (N_LENGTH + 1) + j].y()) * (1 - off_x) +
 				(vertex[(i + 1) * (N_LENGTH + 1) + j].y() - vertex[i * (N_LENGTH + 1) + j].y()) *(1 - off_z);
-		break;
 	case YS_ZX:
 		if (off_x >= off_z)
 			return vertex[i * (N_LENGTH + 1) + j + 1].y() +
@@ -124,6 +128,7 @@ float Table::getHeight(float x, float z) const {
 			return vertex[(i + 1) * (N_LENGTH + 1) + j].y() +
 				(vertex[(i + 1) * (N_LENGTH + 1) + j + 1].y() - vertex[(i + 1) * (N_LENGTH + 1) + j].y()) * off_x +
 				(vertex[i * (N_LENGTH + 1) + j].y() - vertex[(i + 1) * (N_LENGTH + 1) + j].y()) * (1 - off_z);
-		break;
+	default:
+		throw "Are you kidding?";
 	}
 }
