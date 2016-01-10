@@ -12,6 +12,9 @@ extern "C" {
 #endif
 
 int main(int argc, char * argv[]) {
+#ifndef NDEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 	glutInit(&argc, argv);
 	Game::Instance.init();
 	glutMainLoop();
