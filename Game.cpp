@@ -48,47 +48,27 @@ void Game::destroy() {
 	SAFE_DELETE(fps_label);
 }
 
+void Game::_render() {
+	table->render();
+	ball->render();
+	for (int i = 0; i < N_RUNNERS; i++)
+		runnerBalls[i]->render();
+	for (int i = 0; i < N_LAZY; i++)
+		lazyBalls[i]->render();
+	flying->render();
+	renderer->setFlag(true);
+	flag->render();
+	renderer->setFlag(false);
+}
+
 void Game::_glDisplay() {
 	camera->setMatrix();
 
 	// render game objects
 	renderer->stage1();
-	table->render();
-	ball->render();
-	for (int i = 0; i < N_RUNNERS; i++)
-		runnerBalls[i]->render();
-	for (int i = 0; i < N_LAZY; i++)
-		lazyBalls[i]->render();
-	flying->render();
-	renderer->setFlag(true);
-	flag->render();
-	renderer->setFlag(false);
-
 	renderer->stage2();
-	table->render();
-	ball->render();
-	for (int i = 0; i < N_RUNNERS; i++)
-		runnerBalls[i]->render();
-	for (int i = 0; i < N_LAZY; i++)
-		lazyBalls[i]->render();
-	flying->render();
-	renderer->setFlag(true);
-	flag->render();
-	renderer->setFlag(false);
-
 	renderer->stage3();
-	table->render();
-	ball->render();
-	for (int i = 0; i < N_RUNNERS; i++)
-		runnerBalls[i]->render();
-	for (int i = 0; i < N_LAZY; i++)
-		lazyBalls[i]->render();
-	flying->render();
-	renderer->setFlag(true);
-	flag->render();
-	renderer->setFlag(false);
-
-	renderer->end();
+	renderer->stage4();
 
 	// render UI
 	glMatrixMode(GL_PROJECTION);
@@ -120,9 +100,9 @@ void Game::_glFrame(float deltaTime) {
 		tmp.normalize();
 		Eigen::Vector3f cross = front.cross(tmp);
 		if (cross(1, 0) > 0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)) * (180.f / F_PI), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 		else if (cross(1, 0) < -0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)) * (180.f / F_PI), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 	}
 
 	// change direction of runner balls
@@ -137,9 +117,10 @@ void Game::_glFrame(float deltaTime) {
 		tmp.normalize();
 		Eigen::Vector3f cross = front.cross(tmp);
 		if (cross(1, 0) > 0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)) * (180.f / F_PI), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
 		else if (cross(1, 0) < -0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)) * (180.f / F_PI), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+		phys->setVelocity(runnerBalls[i], ballV);
 	}
 
 	// change velocity of lazy balls
@@ -265,6 +246,15 @@ void Game::_cameraFollow(const Vector3f &oldP, const Vector3f &newP) {
 	float dis = (camera->getPosition() - oldP).norm();
 	camera->setPosition(newP);
 	camera->backward(dis);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	float pos[] = { newP.x() + 3.f, newP.y() + 3.f, newP.z() + 3.f, 1 };
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT1, GL_POSITION, pos);
+	renderer->setSpotPos(newP + Eigen::Vector3f(3, 3, 3));
 }
 
 void Game::initGL() {
@@ -364,13 +354,34 @@ void Game::initGameObject() {
 }
 
 void Game::initLight() {
+	glEnable(GL_LIGHT0);
+	CHECK_GL;
+	glEnable(GL_LIGHT1);
+	CHECK_GL;
+
 	GLfloat noLight[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, noLight);
+	{
+		GLfloat lightpos[] = { 3.f, 3.f, 3.f, 0.f };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+		GLfloat ones[] = { 0.9f, 0.9f, 0.9f, 1.f };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ones);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, ones);
+		GLfloat specular[] = { .1f,.1f,.1f,1.f };
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	}
+	{
+		GLfloat lightpos[] = { 3.f, 3.f, 3.f, 1.f };
+		glLightfv(GL_LIGHT1, GL_POSITION, lightpos);
+		GLfloat ones[] = { 1.f, 1.f, 1.f, 1.f };
+		glLightfv(GL_LIGHT1, GL_AMBIENT, ones);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, ones);
+		GLfloat specular[] = { .1f,.1f,.1f,1.f };
+		glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
+	}
 
-	renderer->setLightPosition(3.0f, 3.0f, 3.0f, 0.0f);
-	renderer->setLightAmbient(1, 1, 1, 1);
-	renderer->setLightDiffuse(1, 1, 1, 1);
-	renderer->setLightSpecular(.1f, .1f, .1f, .1f);
+	renderer->setSpotDirection(Eigen::Vector3f(-1, -1, -1));
+	renderer->setSpotCutoff(0.02f);
 }
 
 void Game::initCamera() {
@@ -498,6 +509,7 @@ void Game::init() {
 	initGL();
 	CHECK_GL
 	renderer = new ShadowRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
+	renderer->setRenderFunc(render, this);
 	CHECK_GL
 	initGameObject();
 	CHECK_GL

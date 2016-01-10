@@ -81,6 +81,8 @@ private:
 	}
 	void _collision(Ball *a, Ball *b);
 	static void glClose() { Instance.destroy(); }
+	static void render(void *that) { ((Game*) that)->_render(); }
+	void _render();
 
 	// Renderer
 	ShadowRenderer *renderer = NULL;
