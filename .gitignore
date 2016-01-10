@@ -11,3 +11,7 @@ Release/
 *.vspx
 !/libs/glew/glew32.lib
 !/libs/turbojpeg/turbojpeg.lib
+!/libs/libpng/libpng16.lib
+!/libs/libpng/libpng16d.lib
+!/libs/libpng/zlib.lib
+!/libs/libpng/zlibd.lib

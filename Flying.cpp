@@ -15,7 +15,7 @@ Flying::Flying(const char *filename, float radius) : OBJBall(filename, radius, 1
 void Flying::think(float deltaTime, Phys *phys) {
 	switch (state) {
 	case S_FLOATING: {
-		float p = rand(0, 1);
+		float p = rand(0.f, 1.f);
 		if (p < FLYING_RUSH_P) {
 			target = Vector3f(
 				rand(FLYING_MIN_X, FLYING_MAX_X),
@@ -39,7 +39,7 @@ void Flying::think(float deltaTime, Phys *phys) {
 	}
 	case S_RUSHING:
 		if ((target - getPosition()).norm() < deltaTime * FLYING_RUSH_VELOCITY) {
-			phys->setVelocity(this, vec4To3(matRotateAroundY(rand(0, 360)) * Vector4f({ FLYING_FLOATING_VELOCITY, 0, 0, 1 })));
+			phys->setVelocity(this, vec4To3(matRotateAroundY(rand(0.f, 360.f)) * Vector4f({ FLYING_FLOATING_VELOCITY, 0, 0, 1 })));
 			state = S_FLOATING;
 		} else
 			phys->setVelocity(this, (target - getPosition()).normalized() * FLYING_RUSH_VELOCITY);
@@ -58,7 +58,7 @@ void Flying::think(float deltaTime, Phys *phys) {
 		}
 		break;
 	case S_DOWN: {
-		float p = rand(0, 1);
+		float p = rand(0.f, 1.f);
 		if (p < FLYING_WAKEUP_P) {
 			target = Vector3f(
 				getPosition().x(),

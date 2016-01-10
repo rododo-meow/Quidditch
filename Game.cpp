@@ -14,6 +14,8 @@
 #include "Shadow.h"
 #include "Table.h"
 #include "Perlin.h"
+#include "Particle.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace Eigen;
@@ -23,11 +25,6 @@ Game Game::Instance;
 
 Game::~Game() {
 	destroy();
-}
-
-#define SAFE_DELETE(x) if ((x)) { \
-	delete (x); \
-	(x) = NULL; \
 }
 
 void Game::destroy() {
@@ -47,6 +44,9 @@ void Game::destroy() {
 	SAFE_DELETE(renderer);
 	SAFE_DELETE(fps_label);
 	SAFE_DELETE(gameover_label);
+	SAFE_DELETE(particle);
+	if (particleParameter.texture)
+		particleParameter.texture->unload();
 }
 
 void Game::_render() {
@@ -70,6 +70,9 @@ void Game::_glDisplay() {
 	renderer->stage2();
 	renderer->stage3();
 	renderer->stage4();
+
+	// render particle
+	particle->render();
 
 	// render UI
 	glMatrixMode(GL_PROJECTION);
@@ -112,7 +115,7 @@ void Game::_glFrame(float deltaTime) {
 		Eigen::Vector3f front = ball->getPosition() - runnerBalls[i]->getPosition();
 		front(1, 0) = 0;
 		front.normalize();
-		front = vec4To3(matRotateAroundY(rand(-3, 3)) * vec3To4(front));
+		front = vec4To3(matRotateAroundY(rand(-3.f, 3.f)) * vec3To4(front));
 		Eigen::Vector3f tmp = ballV;
 		tmp(1, 0) = 0;
 		tmp.normalize();
@@ -138,7 +141,11 @@ void Game::_glFrame(float deltaTime) {
 	// let flag do phys simulation
 	flag->update(deltaTime);
 
+	// physical system update
 	phys->update(deltaTime);
+
+	// particle system update
+	particle->update(deltaTime);
 
 	// change velocity of main ball
 	if (ballV.norm() < INIT_VELOCITY)
@@ -231,7 +238,7 @@ void Game::_glKeyboard(int key) {
 			camera->backward(0.1f);
 		break;
 	case 'f':
-		phys->update(0.06f);
+		particle->update(0.06f);
 		break;
 	case VK_ESCAPE:
 		glutLeaveMainLoop();
@@ -352,6 +359,29 @@ void Game::initGameObject() {
 	flag->setPosition({ FLAG_POSITION_X, FLAG_POSITION_Y, FLAG_POSITION_Z });
 	flag->setAmbient(0.3f);
 	flag->setDiffuse(0.5f);
+
+	particle = new ParticleSystem();
+	{
+		particleParameter.minCnt = 500;
+		particleParameter.maxCnt = 500;
+		particleParameter.direction = 0;
+		particleParameter.spread = 360;
+		particleParameter.minLifetime = 0.5f;
+		particleParameter.maxLifetime = 0.8f;
+		particleParameter.minV = 0.5f;
+		particleParameter.maxV = 1.f;
+		particleParameter.a = 0.f;
+		particleParameter.beginColor.r = particleParameter.beginColor.g = 1;
+		particleParameter.beginColor.b = 0;
+		particleParameter.beginColor.a = 0.8f;
+		particleParameter.endColor.r = 1;
+		particleParameter.endColor.g = particleParameter.endColor.b = 0.2f;
+		particleParameter.endColor.a = 0.65f;
+		particleParameter.beginSize.x = particleParameter.beginSize.y = 0.07f;
+		particleParameter.endSize.x = particleParameter.beginSize.x * 0.5f;
+		particleParameter.endSize.y = particleParameter.beginSize.y * 0.5f;
+		particleParameter.texture = Texture::load("Shader/particle.png");
+	}
 }
 
 void Game::initLight() {
@@ -402,17 +432,22 @@ void Game::setScore(int64_t score) {
 }
 
 void Game::_collision(Ball *a, Ball *b) {
-	if (isGameOver)
-		return;
 	if (b->data == ball)
 		b = a, a = ball;
 	if (a->data == ball) {
 		if (b->data == flying) {
+			particle->spawn(particleParameter, ball->getPosition());
+			if (isGameOver)
+				return;
 			setScore(getScore() + FLYING_SCORE);
 			gameOver();
 			return;
 		}
 		if (lastCollisionTime < 0 || getTime() - lastCollisionTime > SCORE_COOLDOWN) {
+			lastCollisionTime = getTime();
+			particle->spawn(particleParameter, ball->getPosition());
+			if (isGameOver)
+				return;
 			if (b->data == runnerBalls)
 				setScore(getScore() - PENALTY_SCORE);
 			else if (b->data == lazyBalls) {
@@ -420,8 +455,8 @@ void Game::_collision(Ball *a, Ball *b) {
 				float v = abs(va.dot(ccline) - vb.dot(ccline));
 				setScore(getScore() + (int)(v * v * SCORE_FACTOR + BASE_SCORE));
 			}
-		}
-		lastCollisionTime = getTime();
+		} else
+			lastCollisionTime = getTime();
 	}
 }
 

@@ -7,6 +7,7 @@
 #include <sys/timeb.h>
 #include "Eigen/Eigen"
 #include "GameParam.h"
+#include "Particle.h"
 
 class Label;
 class OBJBall;
@@ -21,6 +22,7 @@ class Rect;
 class Flag;
 class ShadowRenderer;
 class Table;
+class ParticleSystem;
 class Game {
 public:
 	static Game Instance;
@@ -37,7 +39,6 @@ private:
 	float lastCollisionTime = -1;
 	uint64_t frames = 0;
 	bool isGameOver = false;
-	int WINDOW_WIDTH, WINDOW_HEIGHT;
 	int mouse_x, mouse_y;
 
 	// Callbacks
@@ -103,6 +104,8 @@ private:
 	Label *gameover_label = NULL;
 	Flag *flag = NULL;
 	Label *fps_label = NULL;
+	ParticleSystem *particle = NULL;
+	ParticleSystem::ParticleParameter particleParameter;
 
 	// Inits
 	void initGameObject();
@@ -115,6 +118,7 @@ private:
 	void speedUp();
 	void gameOver();
 public:
+	int WINDOW_WIDTH, WINDOW_HEIGHT;
 	void init();
 	void destroy();
 	float getTime() const { return time; }

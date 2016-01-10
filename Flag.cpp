@@ -108,7 +108,7 @@ void Flag::update(float deltaTime) {
 			masses_v[i][j] += Vector3f(0, -g * deltaTime, 0);
 
 	// apply wind
-	Vector3f WIND = vec4To3(matRotateAroundY(rand(-30, 30)) * Vector4f(rand(WIND_FORCE * 0.7f, WIND_FORCE) / M * deltaTime, 0, 0, 1));
+	Vector3f WIND = vec4To3(matRotateAroundY(rand(-30.f, 30.f)) * Vector4f(rand(WIND_FORCE * 0.7f, WIND_FORCE) / M * deltaTime, 0, 0, 1));
 	for (int i = 0; i < N_WIDTH_POINTS; i++)
 		for (int j = 1; j < N_LENGTH_POINTS; j++)
 			masses_v[i][j] += WIND;

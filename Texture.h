@@ -19,6 +19,7 @@ public:
 	void disable();
 	void unload();
 	inline unsigned int getID() const { return texID; }
+	inline Texture *clone() { refcnt++; return this; }
 };
 
 #endif
