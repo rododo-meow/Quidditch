@@ -26,6 +26,7 @@ public:
 		afterCollisionCallbacks.push_back(std::make_pair(callback, that));
 	}
 	Phys() {};
+	~Phys();
 	void addTable(Table *table) { tables.push_back(table); }
 	void addBall(Ball *ball) { balls.insert(std::make_pair(ball, new Data())); }
 	void update(float deltaTime);

@@ -73,6 +73,7 @@ Texture * Texture::getNoiseTexture(size_t width, size_t height) {
 			*tmp++ = t;
 		}
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, data);
+	delete data;
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return texture;
 }

@@ -46,6 +46,7 @@ void Game::destroy() {
 	SAFE_DELETE(flag);
 	SAFE_DELETE(renderer);
 	SAFE_DELETE(fps_label);
+	SAFE_DELETE(gameover_label);
 }
 
 void Game::_render() {

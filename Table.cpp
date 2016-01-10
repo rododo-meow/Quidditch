@@ -92,9 +92,13 @@ Table::Table(const std::string &model, const std::string &faceTexture, float WID
 }
 
 Table::~Table() {
+	texture->unload();
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	delete drawable;
+	delete[] normals;
+	delete[] vertex;
+	delete[] directions;
 }
 
 void Table::render() {

@@ -176,11 +176,15 @@ void ShadowRenderer::updateSpotCone() {
 }
 
 ShadowRenderer::~ShadowRenderer() {
+	glDeleteBuffers(1, &vboSpotCone);
+	glDeleteVertexArrays(1, &vaoSpotCone);
 	glDeleteBuffers(1, &vboRect);
 	glDeleteVertexArrays(1, &vaoRect);
 	glDeleteRenderbuffers(1, &depthBuffer);
+	glDeleteRenderbuffers(1, &stencilBuffer2);
 	glDeleteRenderbuffers(1, &stencilBuffer);
 	glDeleteFramebuffers(1, &fboMRT);
+	glDeleteTextures(1, &spotBuffer);
 	glDeleteTextures(1, &ambientBuffer);
 	glDeleteTextures(1, &fullLightBuffer);
 	delete programMRT;

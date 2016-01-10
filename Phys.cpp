@@ -8,6 +8,11 @@ using namespace GameParam;
 
 #define INF 999.f
 
+Phys::~Phys() {
+	for (std::map<Ball*, Data*>::iterator it = balls.begin(); it != balls.end(); it++)
+		delete it->second;
+}
+
 float triangleDistance(const Eigen::Vector3f P, const Eigen::Vector3f &A, const Eigen::Vector3f &B, const Eigen::Vector3f &C, const Eigen::Vector3f &normal) {
 	Eigen::Vector3f v0 = C - A;
 	Eigen::Vector3f v1 = B - A;
