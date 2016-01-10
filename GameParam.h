@@ -21,14 +21,14 @@ namespace GameParam {
 	static const float TABLE_LENGTH = 1.7f;
 	static const float CORNER_RADIUS = 0.05f;
 	static const float TABLE_FACE_Y = -0.02137f;
-
+	 
 	static const float BALL_RADIUS = 0.025f;
 	static const float INIT_VELOCITY = 0.3f;
 	static const float ACCELERATION = INIT_VELOCITY * 3.f;
 	static const float RUNNER_INIT_VELOCITY = INIT_VELOCITY / 1.3f;
 	static const float RUNNER_ACCELERATION = ACCELERATION * 1.5f;
-	static const float TURNING_FACTOR = 1.5f;
-	static const float RUNNER_TURNING_FACTOR = 1.f;
+	static const float TURNING_FACTOR = 60.f;
+	static const float RUNNER_TURNING_FACTOR = 345.f;
 	static const float SPEED_UP_VELOCITY = INIT_VELOCITY * 2.5f;
 	static const float SPEED_UP_COOLDOWN = 5.f;
 	static const float FLYING_RUSH_VELOCITY = INIT_VELOCITY * 5;

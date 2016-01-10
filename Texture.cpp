@@ -141,6 +141,8 @@ Texture::Texture(const char *filename) {
 
 Texture::~Texture() {
 	glDeleteTextures(1, &texID);
+	if (loadedTex.size() == 0)
+		return;
 	for (std::map<std::string, Texture*>::iterator it = loadedTex.begin(); it != loadedTex.end(); it++)
 		if (it->second == this) {
 			loadedTex.erase(it);

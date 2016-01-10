@@ -11,7 +11,6 @@ void main() {
     float NdotL;
 
     ambientColor = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
-    spotColor = gl_FrontLightProduct[1].ambient + gl_FrontLightProduct[1].diffuse + gl_FrontLightProduct[1].specular;
     lightdir = normalize(vec3(gl_LightSource[0].position));
     if (isFlag) {
         normal = normalize(gl_NormalMatrix * gl_Normal);
@@ -20,10 +19,12 @@ void main() {
             normal = -normal;
         NdotL = max(dot(normal, lightdir), 0.0);
         fullLightColor = ambientColor + NdotL * (gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse);
+        spotColor = gl_FrontLightProduct[1].ambient + NdotL * (gl_FrontMaterial.diffuse * gl_LightSource[1].diffuse);
     } else {
         normal = normalize(gl_NormalMatrix * Normal);
         NdotL = max(dot(normal, lightdir), 0.0);
         fullLightColor = ambientColor + NdotL * (gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse);
+        spotColor = gl_FrontLightProduct[1].ambient + NdotL * (gl_FrontMaterial.diffuse * gl_LightSource[1].diffuse);
     }
 
     if (isFlag)

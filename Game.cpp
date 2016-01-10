@@ -104,9 +104,9 @@ void Game::_glFrame(float deltaTime) {
 		tmp.normalize();
 		Eigen::Vector3f cross = front.cross(tmp);
 		if (cross(1, 0) > 0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)) * (180.f / F_PI), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)) * (180.f / F_PI), TURNING_FACTOR * deltaTime / ballV.norm())) * vec3To4(ballV));
 		else if (cross(1, 0) < -0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)) * (180.f / F_PI), TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)) * (180.f / F_PI), TURNING_FACTOR * deltaTime / ballV.norm())) * vec3To4(ballV));
 	}
 
 	// change direction of runner balls
@@ -121,9 +121,9 @@ void Game::_glFrame(float deltaTime) {
 		tmp.normalize();
 		Eigen::Vector3f cross = front.cross(tmp);
 		if (cross(1, 0) > 0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)) * (180.f / F_PI), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, 1.f, 0.f }), min(asin(cross(1, 0)) * (180.f / F_PI), RUNNER_TURNING_FACTOR * deltaTime / tmp.norm())) * vec3To4(ballV));
 		else if (cross(1, 0) < -0.1f)
-			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)) * (180.f / F_PI), RUNNER_TURNING_FACTOR / ballV.norm())) * vec3To4(ballV));
+			ballV = vec4To3(matRotate(Vector3f({ 0.f, -1.f, 0.f }), min(asin(-cross(1, 0)) * (180.f / F_PI), RUNNER_TURNING_FACTOR * deltaTime / tmp.norm())) * vec3To4(ballV));
 		phys->setVelocity(runnerBalls[i], ballV);
 	}
 
